@@ -37,10 +37,12 @@ async function bootstrap() {
                   logColor = '\x1b[37m' // 흰색
                   break
               }
+
               return `[${label}] ${logColor}${timestamp} [${level.toUpperCase()}] - ${message}\x1b[0m` // [프로젝트명] 시간 [로그레벨] 메세지
             }),
           ),
         }),
+
         new winston.transports.File({
           level: 'error',
           filename: `error-${moment(new Date()).format('YYYY-MM-DD')}.log`, // // 에러 로그는 error-2023-10-31.log 형식으로 저장
@@ -52,6 +54,7 @@ async function bootstrap() {
             winston.format.label({ label: 'foodfood' }), // 프로젝트 이름
             winston.format.printf(({ level, message, label, timestamp }) => {
               let logColor
+
               switch (level) {
                 case 'log':
                   logColor = '\x1b[34m' // 파란색
@@ -66,10 +69,13 @@ async function bootstrap() {
                   logColor = '\x1b[37m' // 흰색
                   break
               }
+
               return `[${label}] ${logColor}${timestamp} [${level.toUpperCase()}] - ${message}\x1b[0m`
             }),
+            winston.format.json(), // 에러는 json형식으로 저장한다.
           ),
         }),
+
         new winston.transports.File({
           filename: `application-${moment(new Date()).format(
             'YYYY-MM-DD',
@@ -91,7 +97,7 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('please insert project name')
     .setDescription('The [project name] API description')
-    .setVersion('1.0')
+    .setVersion('1.0.0')
     .addBearerAuth()
     .addTag('user')
     .build()
