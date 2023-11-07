@@ -88,17 +88,22 @@ export class RestaurantService {
   }
 
   async getRestaurantById(id: number) {
+    //유명 맛집 상세정보 캐싱적용
     const cacheKey = `RestaurantId:${id}`
-    const restaurant = await this.cacheService.getFromCache(cacheKey)
-
-    if (restaurant) return { restaurant }
-
+    const popularRestaurant = await this.cacheService.getFromCache(cacheKey)
+    // 캐싱데이터가 있다면 바로 반환
+    if (popularRestaurant) return { popularRestaurant }
     try {
       const result = await this.restaurantRepository.findRestaurantById(id)
 
-      await this.cacheService.setCache(cacheKey, result, 3600) // Cache for 1 hour
-
-      return { result }
+      const popularRestaurants =
+        await this.restaurantRepository.findPopularRestaurantById(id)
+      // score가 4점이상인 맛집은 캐싱후 반환
+      if (!popularRestaurants) return { result }
+      else {
+        await this.cacheService.setCache(cacheKey, popularRestaurants, 600) // Cache for 10m
+        return { popularRestaurants }
+      }
     } catch (error) {
       throw new InternalServerErrorException(
         '해당 리뷰를 불러오는데 실패했습니다.',

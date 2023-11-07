@@ -36,4 +36,14 @@ export class RestaurantRepository extends Repository<Restaurant> {
       .getOne()
     return restaurant
   }
+
+  async findPopularRestaurantById(id: number) {
+    const popularRestaurant = await this.createQueryBuilder('popularRestaurant')
+      .leftJoinAndSelect('popularRestaurant.reviews', 'review')
+      .where('popularRestaurant.id = :id', { id })
+      .andWhere('popularRestaurant.score >= 4')
+      .orderBy('review.createdAt', 'DESC')
+      .getOne()
+    return popularRestaurant
+  }
 }
