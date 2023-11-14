@@ -1,4 +1,7 @@
-<img src="./public/logo.png" alt="logo" width="100%" />
+<div align="center">
+  <img src="./public/logo.png" alt="logo" align="center" width="60%" />  
+</div>
+
 
 # 지리기반 맛집 추천 웹 서비스
 
